@@ -1,0 +1,270 @@
+---
+title: "R Palooza with Kelly"
+format:
+  revealjs:
+    self-contained: true
+    slide-number: true
+    theme: white
+    transition: fade
+    code-fold: false
+editor: visual
+---
+
+```{r setup, include=FALSE}
+library(gt)
+library(palmerpenguins)
+library(dplyr)
+
+penguins_summary <- penguins %>%
+  group_by(species) %>%
+  summarize(
+    mean_bill_length = mean(bill_length_mm, na.rm = TRUE),
+    mean_bill_depth = mean(bill_depth_mm, na.rm = TRUE),
+    mean_flipper_length = mean(flipper_length_mm, na.rm = TRUE)
+  )
+```
+
+## [gt](https://gt.rstudio.com/)
+
+![](https://gt.rstudio.com/reference/figures/gt_parts_of_a_table.svg)
+
+## Creating a simple table
+
+```{r}
+#| echo: true
+#| output-location: fragment
+penguins_summary %>%
+  gt() %>%
+  tab_header(title = "Palmer Penguin Measurements")
+```
+
+## Renaming Columns
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "4-9"
+penguins_summary %>%
+  gt() %>%
+  tab_header(title = "Palmer Penguin Measurements") %>%
+  cols_label(
+    species = "Species",
+    mean_bill_length = "Bill Length (mean)",
+    mean_bill_depth = "Bill Depth (mean)",
+    mean_flipper_length = "Flipper Length (mean)"
+  )
+```
+
+## Formatting Numbers
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "4-7"
+penguins_summary %>%
+  gt() %>%
+  tab_header(title = "Palmer Penguin Measurements") %>%
+  fmt_number(
+    columns = c(mean_bill_length, mean_bill_depth, mean_flipper_length),
+    decimals = 2
+  ) %>%
+  cols_label(
+    species = "Species",
+    mean_bill_length = "Bill Length (mean)",
+    mean_bill_depth = "Bill Depth (mean)",
+    mean_flipper_length = "Flipper Length (mean)"
+  )
+```
+## Adding a Column Label
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "4-7"
+penguins_summary %>%
+  gt() %>%
+  tab_header(title = "Palmer Penguin Measurements") %>%
+  tab_spanner(
+    label = "Mean Measurements (mm)",
+    columns = c(mean_bill_length, mean_bill_depth, mean_flipper_length)
+  ) %>%
+  cols_label(
+    species = "Species",
+    mean_bill_length = "Bill Length",
+    mean_bill_depth = "Bill Depth",
+    mean_flipper_length = "Flipper Length"
+  )
+```
+
+## Changing Alignment
+
+```{r}
+#| echo: true
+#| output-location: slide
+#| code-line-numbers: "13-17"
+penguins_summary %>%
+  gt() %>%
+  tab_header(title = "Palmer Penguin Measurements") %>%
+  tab_spanner(
+    label = "Mean Measurements (mm)",
+    columns = c(mean_bill_length, mean_bill_depth, mean_flipper_length)
+  ) %>%
+  cols_label(
+    species = "Species",
+    mean_bill_length = "Bill Length",
+    mean_bill_depth = "Bill Depth",
+    mean_flipper_length = "Flipper Length"
+  ) %>%
+  cols_align(
+    align = "center",
+    columns = everything()
+  )
+```
+
+## Apply Color Themes to Table Cells
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3-6"
+penguins_summary %>%
+  gt() %>%
+  data_color(
+    columns = c(mean_bill_length, mean_flipper_length),
+    fn = scales::col_numeric(palette = "Blues", domain = NULL)
+  )
+```
+
+## Customize Font Sizes and Styles
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3-6"
+penguins_summary %>%
+  gt() %>%
+  tab_options(
+    table.font.size = px(14),
+    table.font.names = "Arial"
+  )
+```
+
+## Add Row Highlighting Based on Conditions
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3-8"
+penguins_summary %>%
+  gt() %>%
+  tab_style(
+    style = cell_fill(color = "lightgray"),
+    locations = cells_body(
+      rows = mean_flipper_length > 200
+    )
+  )
+```
+
+## Add Borders for Columns or Rows
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3-10"
+penguins_summary %>%
+  gt() %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("top", "bottom"),
+      color = "black",
+      weight = px(2)
+    ),
+    locations = cells_column_labels()
+  )
+```
+## Another example
+```{r}
+#| echo: true
+#| output-location: slide
+#| code-line-numbers: "3-25"
+penguins_summary %>%
+  gt() %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("top", "bottom"),
+      color = "black",
+      weight = px(2)),
+    locations = cells_column_labels())%>%
+  tab_style(
+    style = cell_borders(
+      sides = c("bottom"),
+      color = "black",
+      weight = px(2)),
+    locations = cells_body(rows = nrow(penguins_summary)))%>%
+    tab_options(
+    table.border.top.style = "none",
+    table.border.bottom.style = "none",
+    table_body.hlines.style = "none")
+```
+
+## Add Custom Row Labels
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "2-3"
+penguins_summary %>%
+  gt(rowname_col = "species") %>%
+  tab_stubhead(label = "Penguin Species")
+
+```
+
+## Format Numbers with Patterns and Decimals
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3-7"
+penguins_summary %>%
+  gt() %>%
+  fmt_number(
+    columns = c(mean_bill_length, mean_bill_depth, mean_flipper_length),
+    decimals = 2,
+    pattern = "{x} mm"
+  )
+```
+
+## Add Group Labels and Spanners
+```{r}
+#| echo: true
+#| output-location: slide
+#| code-line-numbers: "3-6"
+penguins_summary %>%
+  gt() %>%
+  tab_spanner(
+    label = "Bill Measurements (mm)",
+    columns = c(mean_bill_length, mean_bill_depth)
+  ) %>%
+    tab_spanner(
+    label = "Flipper Measurements (mm)",
+    columns = c(mean_flipper_length)
+  ) %>%
+    cols_label(
+    species = "Species",
+    mean_bill_length = "Length",
+    mean_bill_depth = "Depth",
+    mean_flipper_length = "Length"
+  )
+```
+
+## Add Custom Footnotes
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3-8"
+penguins_summary %>%
+  gt() %>%
+  tab_footnote(
+    footnote = "Data represents mean values per species.",
+    locations = cells_column_labels(
+      columns = c(mean_bill_length, mean_flipper_length)
+    )
+  )
+```
+
+
+
