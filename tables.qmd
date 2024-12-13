@@ -627,3 +627,245 @@ reactable(
   searchable = TRUE,
 )
 ```
+
+# [Flextable](https://davidgohel.github.io/flextable/index.html)
+
+![](https://rfortherestofus.com/images/2019/11/flextable_functions.svg)
+
+## A Simple Table
+
+```{r}
+#| echo: true
+#| output-location: fragment
+library(flextable)
+
+penguins_summary %>%
+  flextable()
+```
+
+## Adding a Header Title
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3"
+
+penguins_summary %>%
+  flextable() %>%
+  set_caption("Penguins Summary Table")
+```
+
+## Adding a Footer
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3"
+penguins_summary %>%
+  flextable() %>%
+  add_footer_lines("This table summarizes penguin measurements.")
+```
+
+## Renaming Column Headers
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3-8"
+penguins_summary %>%
+  flextable() %>%
+    set_header_labels(
+    mean_bill_length = "Mean Bill Length (mm)",
+    mean_bill_depth = "Mean Bill Depth (mm)",
+    mean_flipper_length = "Mean Flipper Length (mm)"
+  )
+```
+
+## Highlighting Specific Rows
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3-8"
+penguins_summary %>%
+  flextable() %>%
+    highlight(i = 1, color = "yellow")
+```
+
+## Adding Conditional Formatting
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3"
+penguins_summary %>%
+  flextable() %>%
+    color(i = ~ mean_bill_length < 48, color = "red")
+```
+
+## Adding Row Numbers
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "1,4"
+penguins_summary$row_num <- seq_len(nrow(penguins_summary))
+
+flextable(penguins_summary) %>%
+  colformat_int(j = "row_num")
+```
+
+## Merging Cells
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "2"
+penguins %>%
+  slice(1:10) %>%
+  flextable() %>%
+  merge_v(j = c("island","year"))
+```
+
+## Changing Text Alignment
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3"
+penguins_summary %>%
+  flextable() %>%
+   align(j = "mean_bill_length", align = "center")
+```
+
+. . .
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3"
+penguins_summary %>%
+  flextable() %>%
+   align(j = c("mean_bill_length","row_num"), align = c("center","left"))
+```
+
+## Adding Background Colors
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3"
+penguins_summary %>%
+  flextable() %>%
+   bg(j = "species", bg = "lightblue")
+```
+
+## Customizing Text Colors
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3"
+penguins_summary %>%
+  flextable() %>%
+  color(j = "mean_bill_depth", color = "orange")
+```
+
+## Adjusting Font Size
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3"
+penguins_summary %>%
+  flextable() %>%
+  fontsize(part = "body", size = 20)
+```
+
+## Making Text Bold
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3"
+penguins_summary %>%
+  flextable() %>%
+  bold(j = "species", bold = TRUE)
+```
+
+## Rotating Text
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3"
+penguins_summary %>%
+  flextable() %>%
+    rotate(j = "species", rotation = "btlr")
+```
+
+## Applying a Theme
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3"
+penguins_summary %>%
+  flextable() %>%
+  theme_vanilla()
+```
+
+. . .
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3"
+penguins_summary %>%
+  flextable() %>%
+  theme_box()
+```
+
+---
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3"
+penguins_summary %>%
+  flextable() %>%
+  theme_alafoli()
+```
+
+. . .
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3"
+penguins_summary %>%
+  flextable() %>%
+  theme_vader()
+```
+
+. . .
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3"
+penguins_summary %>%
+  flextable() %>%
+  theme_apa()
+```
+
+## Adding Zebra Stripes
+
+```{r}
+#| echo: true
+#| output-location: fragment
+#| code-line-numbers: "3"
+penguins_summary %>%
+  flextable() %>%
+    bg(i = seq(1, nrow(penguins_summary), by = 2), bg = "gray90")
+```
