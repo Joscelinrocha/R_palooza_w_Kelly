@@ -1,5 +1,7 @@
 ---
 title: "R Palooza with Kelly"
+author: "Joscelin Rocha-Hidalgo"
+date: "`r format(Sys.time(), '%a/%d/%b')`"
 format:
   revealjs:
     self-contained: true
@@ -826,7 +828,7 @@ penguins_summary %>%
   theme_box()
 ```
 
----
+------------------------------------------------------------------------
 
 ```{r}
 #| echo: true
